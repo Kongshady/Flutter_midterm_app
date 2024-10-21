@@ -31,82 +31,10 @@ class HomeScreen extends StatelessWidget {
           padding: const EdgeInsets.all(20.0),
           child: Column(
             children: [
-              ExpansionTile(
-                title: const Text(
-                  'Calculation History',
-                  style: TextStyle(fontWeight: FontWeight.bold),
-                ),
-                subtitle: const Text(
-                  'Show your previous Calculations',
-                  style: TextStyle(fontSize: 12),
-                ),
-                iconColor: Colors.white,
-                textColor: Colors.white,
-                backgroundColor: Colors.green,
-                collapsedBackgroundColor: Colors.green,
-                collapsedTextColor: Colors.white,
-                collapsedIconColor: Colors.white,
-                collapsedShape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(10)),
-                shape: RoundedRectangleBorder(
-                  side: BorderSide.none,
-                  borderRadius: BorderRadius.circular(10),
-                ),
-                children: [
-                  Container(
-                    height: 250,
-                    color: Colors.grey[300],
-                    child: ListView(
-                      children: const [
-                        HistoryTile(textTitle: 'Previous DBW: 55.8'),
-                        HistoryTile(textTitle: 'Previous TEA: 1500'),
-                        HistoryTile(textTitle: 'Previous TEA: 1432'),
-                        HistoryTile(textTitle: 'Previous DBW: 60'),
-                        HistoryTile(textTitle: 'Previous DBW: 60'),
-                        HistoryTile(textTitle: 'Previous DBW: 60'),
-                      ],
-                    ),
-                  ),
-                  Row(
-                    children: [
-                      // BMI BUTTON
-                      Expanded(
-                        child: CustomButton(
-                          buttonName: 'Show BMI',
-                          onPressed: () {},
-                        ),
-                      ),
-
-                      const SizedBox(
-                        width: 10,
-                      ),
-
-                      // DBW BUTTON
-                      Expanded(
-                        child: CustomButton(
-                          buttonName: 'Show DBW',
-                          onPressed: () {},
-                        ),
-                      ),
-
-                      const SizedBox(
-                        width: 10,
-                      ),
-
-                      // TEA BUTTON
-                      Expanded(
-                        child: CustomButton(
-                          buttonName: 'Show TEA',
-                          onPressed: () {},
-                        ),
-                      ),
-                    ],
-                  ),
-                ],
-              ),
-              const SizedBox(height: 10),
               Column(
                 children: [
+                  // Calculator body
+
                   const Text(
                     'Calculators',
                     style: TextStyle(
@@ -116,8 +44,86 @@ class HomeScreen extends StatelessWidget {
                   ),
                   const Divider(
                     height: 10,
-                    // color: Colors.green,
                   ),
+                  const SizedBox(height: 10),
+                  ExpansionTile(
+                    title: const Text(
+                      'Calculation History',
+                      style: TextStyle(fontWeight: FontWeight.bold),
+                    ),
+                    subtitle: const Text(
+                      'Show your previous Calculations',
+                      style: TextStyle(fontSize: 12),
+                    ),
+                    iconColor: Colors.white,
+                    textColor: Colors.white,
+                    backgroundColor: Colors.green,
+                    collapsedBackgroundColor: Colors.green,
+                    collapsedTextColor: Colors.white,
+                    collapsedIconColor: Colors.white,
+                    collapsedShape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(10)),
+                    shape: RoundedRectangleBorder(
+                      side: BorderSide.none,
+                      borderRadius: BorderRadius.circular(10),
+                    ),
+                    children: [
+                      Container(
+                        height: 250,
+                        color: Colors.grey[300],
+                        child: ListView(
+                          children: const [
+                            HistoryTile(textTitle: 'Previous DBW: 55.8'),
+                            HistoryTile(textTitle: 'Previous TEA: 1500'),
+                            HistoryTile(textTitle: 'Previous TEA: 1432'),
+                            HistoryTile(textTitle: 'Previous DBW: 60'),
+                            HistoryTile(textTitle: 'Previous DBW: 60'),
+                            HistoryTile(textTitle: 'Previous DBW: 60'),
+                          ],
+                        ),
+                      ),
+                      Row(
+                        children: [
+                          // BMI BUTTON
+                          Expanded(
+                            child: CustomButton(
+                              buttonName: 'Show BMI',
+                              onPressed: () {},
+                            ),
+                          ),
+
+                          const SizedBox(
+                            width: 10,
+                          ),
+
+                          // DBW BUTTON
+                          Expanded(
+                            child: CustomButton(
+                              buttonName: 'Show DBW',
+                              onPressed: () {},
+                            ),
+                          ),
+
+                          const SizedBox(
+                            width: 10,
+                          ),
+
+                          // TEA BUTTON
+                          Expanded(
+                            child: CustomButton(
+                              buttonName: 'Show TEA',
+                              onPressed: () {},
+                            ),
+                          ),
+                        ],
+                      ),
+                    ],
+                  ),
+
+                  const SizedBox(
+                    height: 10,
+                  ),
+
                   // Body Mass Index
                   CalculatorTile(
                     tileTitle: 'Body Mass Index',
@@ -144,22 +150,33 @@ class HomeScreen extends StatelessWidget {
                       Navigator.pushNamed(context, '/tea');
                     },
                   ),
-
-                  // Convert to CPF
-                  CalculatorTile(
-                    tileTitle: 'Convert to CPF (Coming Soon)',
-                    icon: Icons.conveyor_belt,
-                    onTap: () {},
-                  ),
-
-                  // Create Meal Plan
-                  CalculatorTile(
-                    tileTitle: 'Create Meal Plan (Coming Soon)',
-                    icon: Icons.create,
-                    onTap: () {},
-                  ),
                 ],
-              )
+              ),
+
+              // Conversion body
+
+              const SizedBox(height: 10),
+              const Text(
+                'Converters',
+                style: TextStyle(
+                    color: Colors.green,
+                    fontSize: 22,
+                    fontWeight: FontWeight.bold),
+              ),
+              const Divider(height: 10),
+              // Convert to CPF
+              CalculatorTile(
+                tileTitle: 'Convert to CPF (Coming Soon)',
+                icon: Icons.conveyor_belt,
+                onTap: () {},
+              ),
+
+              // Create Meal Plan
+              CalculatorTile(
+                tileTitle: 'Create Meal Plan (Coming Soon)',
+                icon: Icons.create,
+                onTap: () {},
+              ),
             ],
           ),
         ),
