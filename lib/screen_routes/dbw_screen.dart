@@ -1,51 +1,113 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:health_app/providers/dbw_provider.dart';
 import 'package:health_app/widgets/custom_button.dart';
 import 'package:health_app/widgets/custom_textfield.dart';
 
-class DBWScreen extends StatefulWidget {
+class DBWScreen extends ConsumerWidget {
   const DBWScreen({super.key});
 
   @override
-  State<DBWScreen> createState() => _DBWScreenState();
-}
+  Widget build(BuildContext context, WidgetRef ref) {
+    final dbwState = ref.watch(dbwProvider);
+    final TextEditingController heightController = TextEditingController();
+    final TextEditingController weightController = TextEditingController();
 
-class _DBWScreenState extends State<DBWScreen> {
-  final TextEditingController _heightController = TextEditingController();
-  final TextEditingController _weightController = TextEditingController();
-
-  String ageGroupDropdownValue = 'Infant';
-  String methodDropdownValue = 'NDAP Method';
-  String result = 'Display Output';
-
-  // Function to calculate the desirable body weight
-  void calculateDBW() {
-    double height = double.tryParse(_heightController.text) ?? 0;
-    double weight = double.tryParse(_weightController.text) ?? 0;
-
-    if (height <= 0 || weight <= 0) {
-      setState(() {
-        result = 'Please enter valid height and weight.';
-      });
-      return;
+    void calculateDBW() {
+      final height = double.tryParse(heightController.text) ?? 0;
+      final weight = double.tryParse(weightController.text) ?? 0;
+      ref.read(dbwProvider.notifier).calculateDBW(height, weight);
     }
 
-    double desirableWeight;
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text(
+          'Desirable Body Weight',
+          style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+        ),
+        backgroundColor: Colors.transparent,
+        foregroundColor: Colors.green,
+        centerTitle: true,
+      ),
+      body: SafeArea(
+        child: Padding(
+          padding: const EdgeInsets.all(20.0),
+          child: Column(
+            children: [
+              Container(
+                width: double.infinity,
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(10),
+                  color: Colors.green,
+                ),
+                padding: const EdgeInsets.all(18.0),
+                child: Text(
+                  dbwState.result,
+                  style: const TextStyle(
+                      color: Colors.white, fontWeight: FontWeight.bold),
+                ),
+              ),
+              const SizedBox(height: 10),
 
-    if (methodDropdownValue == 'NDAP Method') {
-      // Example calculation based on NDAP Method (adjust as necessary)
-      desirableWeight = (height * height) *
-          22 /
-          10000; // BMI of 22 as a reference assuming height in cm
-    } else {
-      // Example calculation based on Tanhaussers Method (adjust as necessary)
-      desirableWeight = (height * height) *
-          24 /
-          10000; // BMI of 24 as a reference assuming height in cm
-    }
+              // Age Group Dropdown
+              _buildDropdown<String>(
+                dbwState.ageGroup,
+                const [
+                  DropdownMenuItem(value: 'Infant', child: Text('Infant')),
+                  DropdownMenuItem(value: 'Children', child: Text('Children')),
+                  DropdownMenuItem(value: 'Adult', child: Text('Adult')),
+                ],
+                (String? newValue) {
+                  if (newValue != null) {
+                    ref.read(dbwProvider.notifier).updateAgeGroup(newValue);
+                  }
+                },
+              ),
 
-    setState(() {
-      result = '${desirableWeight.toStringAsFixed(2)} kg';
-    });
+              const SizedBox(height: 10),
+
+              // Method Dropdown
+              _buildDropdown<String>(
+                dbwState.method,
+                const [
+                  DropdownMenuItem(
+                      value: 'NDAP Method', child: Text('NDAP Method')),
+                  DropdownMenuItem(
+                      value: 'Tanhaussers Method',
+                      child: Text('Tanhaussers Method')),
+                ],
+                (String? newValue) {
+                  if (newValue != null) {
+                    ref.read(dbwProvider.notifier).updateMethod(newValue);
+                  }
+                },
+              ),
+
+              const SizedBox(height: 10),
+
+              // Height TextField
+              _buildTextField('Height (cm)', heightController, 3),
+
+              const SizedBox(height: 10),
+
+              // Weight TextField
+              _buildTextField('Weight (kg)', weightController, 3),
+
+              const SizedBox(height: 10),
+
+              // Calculate Button
+              SizedBox(
+                width: double.infinity,
+                child: CustomButton(
+                  buttonName: 'Calculate',
+                  onPressed: calculateDBW,
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
   }
 
   Widget _buildDropdown<T>(
@@ -79,103 +141,6 @@ class _DBWScreenState extends State<DBWScreen> {
       limitText: limitText,
       tfName: label,
       controllerInput: controller,
-    );
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text(
-          'Desirable Body Weight',
-          style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-        ),
-        backgroundColor: Colors.transparent,
-        foregroundColor: Colors.green,
-        centerTitle: true,
-      ),
-      body: SafeArea(
-        child: Padding(
-          padding: const EdgeInsets.all(20.0),
-          child: Column(
-            children: [
-              Container(
-                width: double.infinity,
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(10),
-                  color: Colors.green,
-                ),
-                padding: const EdgeInsets.all(18.0),
-                child: Text(
-                  result.isNotEmpty ? result : 'Text Output Here',
-                  style: const TextStyle(
-                      color: Colors.white, fontWeight: FontWeight.bold),
-                ),
-              ),
-              const SizedBox(height: 10),
-
-              // Age Group Dropdown
-              _buildDropdown<String>(
-                ageGroupDropdownValue,
-                const [
-                  DropdownMenuItem(value: 'Infant', child: Text('Infant')),
-                  DropdownMenuItem(value: 'Children', child: Text('Children')),
-                  DropdownMenuItem(value: 'Adult', child: Text('Adult')),
-                ],
-                (String? newValue) {
-                  if (newValue != null) {
-                    setState(() {
-                      ageGroupDropdownValue = newValue;
-                    });
-                  }
-                },
-              ),
-
-              const SizedBox(height: 10),
-
-              // Method Dropdown
-              _buildDropdown<String>(
-                methodDropdownValue,
-                const [
-                  DropdownMenuItem(
-                      value: 'NDAP Method', child: Text('NDAP Method')),
-                  DropdownMenuItem(
-                      value: 'Tanhaussers Method',
-                      child: Text('Tanhaussers Method')),
-                ],
-                (String? newValue) {
-                  if (newValue != null) {
-                    setState(() {
-                      methodDropdownValue = newValue;
-                    });
-                  }
-                },
-              ),
-
-              const SizedBox(height: 10),
-
-              // Height TextField
-              _buildTextField('Height (cm)', _heightController, 3),
-
-              const SizedBox(height: 10),
-
-              // Weight TextField
-              _buildTextField('Weight (kg)', _weightController, 3),
-
-              const SizedBox(height: 10),
-
-              // Calculate Button
-              SizedBox(
-                width: double.infinity,
-                child: CustomButton(
-                  buttonName: 'Calculate',
-                  onPressed: calculateDBW,
-                ),
-              ),
-            ],
-          ),
-        ),
-      ),
     );
   }
 }

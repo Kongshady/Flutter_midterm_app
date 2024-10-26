@@ -1,51 +1,25 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:health_app/providers/tea_provider/tea_infant_provider.dart';
 import 'package:health_app/widgets/custom_button.dart';
 import 'package:health_app/widgets/custom_display_output.dart';
 import 'package:health_app/widgets/custom_textfield.dart';
 
-class InfantTab extends StatefulWidget {
+class InfantTab extends ConsumerWidget {
   const InfantTab({super.key});
 
   @override
-  State<InfantTab> createState() => _InfantTabState();
-}
+  Widget build(BuildContext context, WidgetRef ref) {
+    final infantTEAState = ref.watch(infantTEAProvider);
+    final TextEditingController ageController = TextEditingController();
+    final TextEditingController dbwController = TextEditingController();
 
-class _InfantTabState extends State<InfantTab> {
-  final TextEditingController _ageController = TextEditingController();
-  final TextEditingController _dbwController = TextEditingController();
-
-  String output = 'Display Output';
-
-  void _displayOutput() {
-    final age = int.tryParse(_ageController.text);
-    final dbw = int.tryParse(_dbwController.text);
-
-    if (age != null && dbw != null && age > 0) {
-      int tea;
-
-      if (age >= 1 && age <= 6) {
-        tea = 120 * dbw;
-      } else if (age >= 7 && age <= 12) {
-        tea = 110 * dbw;
-      } else {
-        setState(() {
-          output = "Age must be between 1 and 12 months";
-        });
-        return;
-      }
-
-      setState(() {
-        output = "$tea kcal/day";
-      });
-    } else {
-      setState(() {
-        output = "Please enter valid age and DBW.";
-      });
+    void calculateTEA() {
+      final age = int.tryParse(ageController.text) ?? 0;
+      final dbw = int.tryParse(dbwController.text) ?? 0;
+      ref.read(infantTEAProvider.notifier).calculateTEA(age, dbw);
     }
-  }
 
-  @override
-  Widget build(BuildContext context) {
     return Scaffold(
       body: Padding(
         padding: const EdgeInsets.all(20.0),
@@ -60,39 +34,29 @@ class _InfantTabState extends State<InfantTab> {
                 color: Colors.green,
               ),
             ),
-            const SizedBox(
-              height: 10,
-            ),
+            const SizedBox(height: 10),
 
             // Custom Display Output
-            CustomDisplayOutput(outputName: output),
+            CustomDisplayOutput(outputName: infantTEAState.message.isNotEmpty ? infantTEAState.message : "${infantTEAState.tea} kcal/day"),
 
-            const SizedBox(
-              height: 10,
-            ),
+            const SizedBox(height: 10),
             CustomTextfield(
               tfName: "Age (Months)",
-              controllerInput: _ageController,
+              controllerInput: ageController,
               limitText: 2,
             ),
-            const SizedBox(
-              height: 10,
-            ),
+            const SizedBox(height: 10),
             CustomTextfield(
-              tfName: "Desirable body weight",
-              controllerInput: _dbwController,
+              tfName: "Desirable Body Weight (Kg)",
+              controllerInput: dbwController,
               limitText: 2,
             ),
-            const SizedBox(
-              height: 10,
-            ),
+            const SizedBox(height: 10),
             SizedBox(
               width: double.infinity,
               child: CustomButton(
                 buttonName: "Calculate",
-                onPressed: () {
-                  _displayOutput();
-                },
+                onPressed: calculateTEA,
               ),
             )
           ],
