@@ -139,6 +139,9 @@ class HomeScreen extends StatelessWidget {
                     icon: Icons.monitor_weight,
                     onTap: () {
                       Navigator.pushNamed(context, '/dbw');
+                      // Navigator.push(
+                      // context,
+                      // MaterialPageRoute(builder: (context) => const SecondRoute()),
                     },
                   ),
 
@@ -157,7 +160,7 @@ class HomeScreen extends StatelessWidget {
 
               const SizedBox(height: 10),
               const Text(
-                'Converters',
+                'Convert',
                 style: TextStyle(
                     color: Colors.green,
                     fontSize: 22,

@@ -1,21 +1,21 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:health_app/providers/bmi_provider.dart';
 import 'package:health_app/widgets/custom_button.dart';
 import 'package:health_app/widgets/custom_display_output.dart';
 import 'package:health_app/widgets/custom_textfield.dart';
 
-class BMIScreen extends StatefulWidget {
+class BMIScreen extends ConsumerStatefulWidget {
   const BMIScreen({super.key});
 
   @override
-  State<BMIScreen> createState() => _BMIScreenState();
+  ConsumerState<BMIScreen> createState() => _BMIScreenState();
 }
 
-class _BMIScreenState extends State<BMIScreen> {
+class _BMIScreenState extends ConsumerState<BMIScreen> {
   final TextEditingController _feetController = TextEditingController();
   final TextEditingController _inchesController = TextEditingController();
   final TextEditingController _weightController = TextEditingController();
-
-  String output = 'Display Output';
   bool _isExpanded = false; // Variable to manage the height of the Container
 
   void _toggleContainer() {
@@ -24,30 +24,10 @@ class _BMIScreenState extends State<BMIScreen> {
     });
   }
 
-  void _calculateBMI() {
-    final feet = int.tryParse(_feetController.text);
-    final inches = int.tryParse(_inchesController.text);
-    final weight = double.tryParse(_weightController.text);
-
-    if (feet != null && inches != null && weight != null && weight > 0) {
-      // Convert height from feet and inches to total inches
-      final totalHeightInInches = (feet * 12) + inches;
-
-      // Calculate BMI using the imperial formula
-      double bmi = (weight * 703) / (totalHeightInInches * totalHeightInInches);
-
-      setState(() {
-        output = bmi.toStringAsFixed(2);
-      });
-    } else {
-      setState(() {
-        output = 'Invalid';
-      });
-    }
-  }
-
   @override
   Widget build(BuildContext context) {
+    final bmiState = ref.watch(bmiProvider);
+
     return Scaffold(
       appBar: AppBar(
         title: const Text(
@@ -99,26 +79,21 @@ class _BMIScreenState extends State<BMIScreen> {
                       ],
                     ),
                   )
-                : const SizedBox.shrink(), // Show nothing if not expanded
+                : const SizedBox.shrink(),
           ),
 
-          // Calculator Below
+          const SizedBox(height: 10),
 
           Padding(
             padding: const EdgeInsets.all(20.0),
             child: Column(
               children: [
-                const SizedBox(height: 10),
-
-                // Output Display
-                CustomDisplayOutput(outputName: output),
-
+                CustomDisplayOutput(outputName: bmiState.output),
                 const SizedBox(height: 10),
 
                 // Custom text fields for Height
                 Row(
                   children: [
-                    // Feet textfield
                     Expanded(
                       child: CustomTextfield(
                         limitText: 1,
@@ -127,8 +102,6 @@ class _BMIScreenState extends State<BMIScreen> {
                       ),
                     ),
                     const SizedBox(width: 10),
-
-                    // Inches textfield
                     Expanded(
                       child: CustomTextfield(
                         limitText: 2,
@@ -153,14 +126,32 @@ class _BMIScreenState extends State<BMIScreen> {
                   width: double.infinity,
                   child: CustomButton(
                     buttonName: 'Calculate',
-                    onPressed: _calculateBMI,
+                    onPressed: () {
+                      final feet = int.tryParse(_feetController.text);
+                      final inches = int.tryParse(_inchesController.text);
+                      final weight = double.tryParse(_weightController.text);
+
+                      if (feet != null &&
+                          inches != null &&
+                          weight != null &&
+                          weight > 0) {
+                        ref
+                            .read(bmiProvider.notifier)
+                            .calculateBMI(feet, inches, weight);
+                      } else {
+                        ref
+                            .read(bmiProvider.notifier)
+                            .resetOutput(); // Reset on invalid input
+                      }
+                    },
                   ),
                 ),
-
-                const SizedBox(height: 20),
               ],
             ),
           ),
+          // Output Display
+
+          const SizedBox(height: 20),
         ],
       ),
     );

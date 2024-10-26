@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:health_app/tabs/adult_tab.dart';
-import 'package:health_app/tabs/child_tab.dart';
-import 'package:health_app/tabs/infant_tab.dart';
+import 'package:health_app/widgets/tabs/adult_tab.dart';
+import 'package:health_app/widgets/tabs/child_tab.dart';
+import 'package:health_app/widgets/tabs/infant_tab.dart';
 
 class TEAScreen extends StatelessWidget {
   const TEAScreen({super.key});
