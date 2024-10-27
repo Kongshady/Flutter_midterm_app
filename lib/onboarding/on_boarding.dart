@@ -16,6 +16,7 @@ class OnBoarding extends StatefulWidget {
 class _OnBoardingState extends State<OnBoarding> {
   final PageController _controller = PageController();
   bool onLastPage = false;
+  bool onFirstPage = false;
 
   @override
   Widget build(BuildContext context) {
@@ -26,7 +27,8 @@ class _OnBoardingState extends State<OnBoarding> {
             controller: _controller,
             onPageChanged: (index) {
               setState(() {
-                onLastPage = (index == 2); // Last page
+                onFirstPage = (index == 0); // First Page
+                onLastPage = (index == 2); // Last Page
               });
             },
             children: const [
@@ -42,8 +44,14 @@ class _OnBoardingState extends State<OnBoarding> {
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
               children: [
-                // Back Button (only visible if not on the first page)
-                if (!onLastPage) // If we're not on the last page, show the back button
+                if (onFirstPage)
+                  IntroCustomButton(
+                    textTitle: 'Skip',
+                    onPressed: () {
+                      _controller.jumpToPage(3);
+                    },
+                  ),
+                if (!onLastPage && !onFirstPage)
                   IntroCustomButton(
                     textTitle: 'Back',
                     onPressed: () {
@@ -53,8 +61,6 @@ class _OnBoardingState extends State<OnBoarding> {
                       );
                     },
                   ),
-
-                // Page Indicator (only show if not on last page)
                 if (!onLastPage)
                   SmoothPageIndicator(
                     controller: _controller,
@@ -62,19 +68,15 @@ class _OnBoardingState extends State<OnBoarding> {
                     effect:
                         const SlideEffect(activeDotColor: Color(0xFF4CAF50)),
                   ),
-
-                // Next or Get Started Button
                 IntroCustomButton(
                   textTitle: onLastPage ? 'Get Started' : 'Next',
                   onPressed: () {
                     if (onLastPage) {
-                      // Go to HomeScreen on clicking the Next button
                       Navigator.pushReplacement(context,
                           MaterialPageRoute(builder: (context) {
                         return const HomeScreen();
                       }));
                     } else {
-                      // Go to the next page
                       _controller.nextPage(
                         duration: const Duration(milliseconds: 300),
                         curve: Curves.easeIn,

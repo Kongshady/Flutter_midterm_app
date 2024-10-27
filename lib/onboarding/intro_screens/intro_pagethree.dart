@@ -31,7 +31,7 @@ class IntroPageThree extends StatelessWidget {
                 const SizedBox(
                   height: 10,
                 ),
-                const Text('Subtext Here')
+                const Text('Get tailored recommendations for your health')
               ],
             ),
           )),

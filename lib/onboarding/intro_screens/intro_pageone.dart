@@ -34,7 +34,7 @@ class IntroPageOne extends StatelessWidget {
                 const SizedBox(
                   height: 10,
                 ),
-                const Text('Subtext Here')
+                const Text('Your personalized nutrition calculator.')
               ],
             ),
           )),
