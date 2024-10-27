@@ -1,9 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:health_app/providers/bmi_provider.dart';
-import 'package:health_app/widgets/custom_button.dart';
+import 'package:health_app/providers/history_provider.dart';
 import 'package:health_app/widgets/custom_display_output.dart';
-import 'package:health_app/widgets/custom_textfield.dart';
 
 class BMIScreen extends ConsumerStatefulWidget {
   const BMIScreen({super.key});
@@ -13,14 +12,15 @@ class BMIScreen extends ConsumerStatefulWidget {
 }
 
 class _BMIScreenState extends ConsumerState<BMIScreen> {
+  final _formKey = GlobalKey<FormState>();
   final TextEditingController _feetController = TextEditingController();
   final TextEditingController _inchesController = TextEditingController();
   final TextEditingController _weightController = TextEditingController();
-  bool _isExpanded = false; // Variable to manage the height of the Container
+  bool _isExpanded = false;
 
   void _toggleContainer() {
     setState(() {
-      _isExpanded = !_isExpanded; // Toggle the boolean value
+      _isExpanded = !_isExpanded;
     });
   }
 
@@ -81,77 +81,178 @@ class _BMIScreenState extends ConsumerState<BMIScreen> {
                   )
                 : const SizedBox.shrink(),
           ),
-
           const SizedBox(height: 10),
-
           Padding(
             padding: const EdgeInsets.all(20.0),
-            child: Column(
-              children: [
-                CustomDisplayOutput(outputName: bmiState.output),
-                const SizedBox(height: 10),
+            child: Form(
+              // Might Remove this FORM and the key
+              key: _formKey,
+              child: Column(
+                children: [
+                  // Display Output
+                  CustomDisplayOutput(outputName: bmiState.output),
+                  const SizedBox(height: 10),
 
-                // Custom text fields for Height
-                Row(
-                  children: [
-                    Expanded(
-                      child: CustomTextfield(
-                        limitText: 1,
-                        tfName: 'Feet',
-                        controllerInput: _feetController,
+                  Row(
+                    children: [
+                      Expanded(
+                        child: TextFormField(
+                          controller: _feetController,
+                          keyboardType: TextInputType.number,
+                          decoration: InputDecoration(
+                            labelText: 'Feet',
+                            border: OutlineInputBorder(
+                              borderSide: const BorderSide(color: Colors.green),
+                              borderRadius: BorderRadius.circular(10),
+                            ),
+                            enabledBorder: OutlineInputBorder(
+                              borderSide: const BorderSide(color: Colors.green),
+                              borderRadius: BorderRadius.circular(10),
+                            ),
+                            focusedBorder: OutlineInputBorder(
+                              borderSide: const BorderSide(color: Colors.green),
+                              borderRadius: BorderRadius.circular(10),
+                            ),
+                            labelStyle: const TextStyle(color: Colors.green),
+                          ),
+                          style: const TextStyle(color: Colors.green),
+                          validator: (value) {
+                            if (value == null || value.isEmpty) {
+                              return 'Please enter your feet';
+                            }
+                            if (double.tryParse(value) == null) {
+                              return 'Please enter a valid number';
+                            }
+                            return null;
+                          },
+                        ),
                       ),
-                    ),
-                    const SizedBox(width: 10),
-                    Expanded(
-                      child: CustomTextfield(
-                        limitText: 2,
-                        tfName: 'Inches',
-                        controllerInput: _inchesController,
+                      const SizedBox(
+                        width: 10,
                       ),
+                      Expanded(
+                        child: TextFormField(
+                          controller: _inchesController,
+                          keyboardType: TextInputType.number,
+                          decoration: InputDecoration(
+                            labelText: 'Inches',
+                            border: OutlineInputBorder(
+                              borderSide: const BorderSide(color: Colors.green),
+                              borderRadius: BorderRadius.circular(10),
+                            ),
+                            enabledBorder: OutlineInputBorder(
+                              borderSide: const BorderSide(color: Colors.green),
+                              borderRadius: BorderRadius.circular(10),
+                            ),
+                            focusedBorder: OutlineInputBorder(
+                              borderSide: const BorderSide(color: Colors.green),
+                              borderRadius: BorderRadius.circular(10),
+                            ),
+                            labelStyle: const TextStyle(color: Colors.green),
+                          ),
+                          style: const TextStyle(color: Colors.green),
+                          validator: (value) {
+                            if (value == null || value.isEmpty) {
+                              return 'Please enter your inches';
+                            }
+                            if (double.tryParse(value) == null) {
+                              return 'Please enter a valid number';
+                            }
+                            return null;
+                          },
+                        ),
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: 10.0),
+                  TextFormField(
+                    controller: _weightController,
+                    keyboardType: TextInputType.number,
+                    decoration: InputDecoration(
+                      labelText: 'Weight (Pounds)',
+                      border: OutlineInputBorder(
+                        borderSide: const BorderSide(color: Colors.green),
+                        borderRadius: BorderRadius.circular(10),
+                      ),
+                      enabledBorder: OutlineInputBorder(
+                        borderSide: const BorderSide(color: Colors.green),
+                        borderRadius: BorderRadius.circular(10),
+                      ),
+                      focusedBorder: OutlineInputBorder(
+                        borderSide: const BorderSide(color: Colors.green),
+                        borderRadius: BorderRadius.circular(10),
+                      ),
+                      labelStyle: const TextStyle(color: Colors.green),
                     ),
-                  ],
-                ),
-                const SizedBox(height: 10),
-
-                // Custom text field for Weight
-                CustomTextfield(
-                  limitText: 6,
-                  tfName: 'Weight (Pounds)',
-                  controllerInput: _weightController,
-                ),
-                const SizedBox(height: 10),
-
-                // Custom Button
-                SizedBox(
-                  width: double.infinity,
-                  child: CustomButton(
-                    buttonName: 'Calculate',
-                    onPressed: () {
-                      final feet = int.tryParse(_feetController.text);
-                      final inches = int.tryParse(_inchesController.text);
-                      final weight = double.tryParse(_weightController.text);
-
-                      if (feet != null &&
-                          inches != null &&
-                          weight != null &&
-                          weight > 0) {
-                        ref
-                            .read(bmiProvider.notifier)
-                            .calculateBMI(feet, inches, weight);
-                      } else {
-                        ref
-                            .read(bmiProvider.notifier)
-                            .resetOutput(); // Reset on invalid input
+                    style: const TextStyle(color: Colors.green),
+                    validator: (value) {
+                      if (value == null || value.isEmpty) {
+                        return 'Please enter your height';
                       }
+                      if (double.tryParse(value) == null) {
+                        return 'Please enter a valid number';
+                      }
+                      return null;
                     },
                   ),
-                ),
-              ],
+                  const SizedBox(height: 10.0),
+                  SizedBox(
+                    width: double.infinity,
+                    child: ElevatedButton(
+                      style: ElevatedButton.styleFrom(
+                        foregroundColor: Colors.white,
+                        backgroundColor: Colors.green,
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(10),
+                        ),
+                      ),
+                      onPressed: () {
+                        final feet = int.tryParse(_feetController.text);
+                        final inches = int.tryParse(_inchesController.text);
+                        final weight = double.tryParse(_weightController.text);
+
+                        if (feet != null &&
+                            inches != null &&
+                            weight != null &&
+                            weight > 0) {
+                          ref
+                              .read(bmiProvider.notifier)
+                              .calculateBMI(feet, inches, weight);
+                        } else {
+                          ref.read(bmiProvider.notifier).resetOutput();
+                        }
+
+                        if (_formKey.currentState!.validate()) {
+                          final feet = int.tryParse(_feetController.text);
+                          final inches = int.tryParse(_inchesController.text);
+                          final weight =
+                              double.tryParse(_weightController.text);
+
+                          if (feet != null &&
+                              inches != null &&
+                              weight != null &&
+                              weight > 0) {
+                            final totalHeightInInches = (feet * 12) + inches;
+
+                            double bmi = (weight * 703) /
+                                (totalHeightInInches * totalHeightInInches);
+
+                            // Save BMI to history
+                            ref
+                                .read(bmiDataProvider.notifier)
+                                .addBmiData(bmi, DateTime.now());
+                          } else {
+                            ref.read(bmiProvider.notifier).resetOutput();
+                          }
+                        }
+                      },
+                      child: const Text('Calculate BMI'),
+                    ),
+                  ),
+                ],
+              ),
             ),
           ),
-          // Output Display
-
-          const SizedBox(height: 20),
         ],
       ),
     );

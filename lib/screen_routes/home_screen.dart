@@ -1,14 +1,18 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:health_app/providers/history_provider.dart';
 import 'package:health_app/widgets/calculator_tile.dart';
-import 'package:health_app/widgets/history_tile.dart';
-import 'package:health_app/widgets/custom_button.dart';
+import 'package:intl/intl.dart';
 // import 'package:health_app/widgets/homescreen_drawer.dart';
 
-class HomeScreen extends StatelessWidget {
+class HomeScreen extends ConsumerWidget {
   const HomeScreen({super.key});
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
+    final bmiHistory = ref.watch(bmiDataProvider);
+    final formatter = DateFormat('MMM d, yyyy hh:mm a');
+
     return Scaffold(
       appBar: AppBar(
         title: const Text(
@@ -71,51 +75,20 @@ class HomeScreen extends StatelessWidget {
                       Container(
                         height: 250,
                         color: Colors.grey[300],
-                        child: ListView(
-                          children: const [
-                            HistoryTile(textTitle: 'Previous DBW: 55.8'),
-                            HistoryTile(textTitle: 'Previous TEA: 1500'),
-                            HistoryTile(textTitle: 'Previous TEA: 1432'),
-                            HistoryTile(textTitle: 'Previous DBW: 60'),
-                            HistoryTile(textTitle: 'Previous DBW: 60'),
-                            HistoryTile(textTitle: 'Previous DBW: 60'),
-                          ],
-                        ),
-                      ),
-                      Row(
-                        children: [
-                          // BMI BUTTON
-                          Expanded(
-                            child: CustomButton(
-                              buttonName: 'Show BMI',
-                              onPressed: () {},
-                            ),
-                          ),
-
-                          const SizedBox(
-                            width: 10,
-                          ),
-
-                          // DBW BUTTON
-                          Expanded(
-                            child: CustomButton(
-                              buttonName: 'Show DBW',
-                              onPressed: () {},
-                            ),
-                          ),
-
-                          const SizedBox(
-                            width: 10,
-                          ),
-
-                          // TEA BUTTON
-                          Expanded(
-                            child: CustomButton(
-                              buttonName: 'Show TEA',
-                              onPressed: () {},
-                            ),
-                          ),
-                        ],
+                        child: bmiHistory.isEmpty
+                            ? const Center(child: Text('No BMI history yet.'))
+                            : ListView.builder(
+                                itemCount: bmiHistory.length,
+                                itemBuilder: (context, index) {
+                                  final bmiEntry = bmiHistory[index];
+                                  return ListTile(
+                                    title: Text(
+                                        'BMI: ${bmiEntry['bmi'].toStringAsFixed(2)}'),
+                                    subtitle: Text(
+                                        'Date: ${formatter.format(bmiEntry['date'])}'),
+                                  );
+                                },
+                              ),
                       ),
                     ],
                   ),
