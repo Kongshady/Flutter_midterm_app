@@ -10,10 +10,24 @@ NutriCal is a health app that features calculators for Body Mass Index (BMI), De
 - Planned Meal Planning Feature: (Coming Soon) Personalized meal suggestions to support balanced nutrition.
 - This project is a starting point for a Flutter application.
 
-### APK FILE
+### Installation
+To set-up the project locally, follow these instructions:
+
+1. Clone the Repository:
+  - Open VisualCodeStudio
+  - Click "Clone Repository"
+  - Paste: https://github.com/Kongshady/Flutter_midterm_app.git
+  - Select a folder and click "Open"
+   
+3. Install the necessary dependencies:
+  - Open VSCode terminal
+  - Type "flutter pub get"
+  - Then click "Enter"
+
+3. Run the app:
+  - Right click "main.dart" file
+  - Click "Run Without Debugging"
+
+### APK File
+You can also download the APK file for installation on your Android device from the link below:
 - https://drive.google.com/file/d/1hdrhMbJQZg0hFyaBRexIW43pH-UC_YEL/view?usp=sharing
-
-## APK Installation
-- 
-
-## Installation Using VSCode
