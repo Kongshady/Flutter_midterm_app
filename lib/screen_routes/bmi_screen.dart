@@ -246,7 +246,7 @@ class _BMIScreenState extends ConsumerState<BMIScreen> {
                           }
                         }
                       },
-                      child: const Text('Calculate BMI'),
+                      child: const Text('Calculate'),
                     ),
                   ),
                 ],

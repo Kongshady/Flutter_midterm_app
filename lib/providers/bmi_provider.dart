@@ -11,7 +11,6 @@ class BMIStateNotifier extends StateNotifier<BMIState> {
   void calculateBMI(int feet, int inches, double weight) {
     final totalHeightInInches = (feet * 12) + inches;
 
-    // Calculate BMI using the imperial formula
     double bmi = (weight * 703) / (totalHeightInInches * totalHeightInInches);
 
     state = BMIState(bmi.toStringAsFixed(2));

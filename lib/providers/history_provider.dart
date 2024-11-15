@@ -7,7 +7,7 @@ class BMIData extends StateNotifier<List<Map<String, dynamic>>> {
     state = [...state, {'bmi': bmi, 'date': date}];  
   }  
 
-  //Optional: Add methods to clear history, etc.  
+  //Might Add methods to clear history, etc.  
 }  
 
 final bmiDataProvider = StateNotifierProvider<BMIData, List<Map<String, dynamic>>>((ref) {  

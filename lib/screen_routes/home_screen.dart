@@ -76,14 +76,18 @@ class HomeScreen extends ConsumerWidget {
                         height: 250,
                         color: Colors.grey[300],
                         child: bmiHistory.isEmpty
-                            ? const Center(child: Text('No BMI history yet.'))
+                            ? const Center(child: Text('No history yet.'))
                             : ListView.builder(
                                 itemCount: bmiHistory.length,
                                 itemBuilder: (context, index) {
                                   final bmiEntry = bmiHistory[index];
                                   return ListTile(
                                     title: Text(
-                                        'BMI: ${bmiEntry['bmi'].toStringAsFixed(2)}'),
+                                      'BMI: ${bmiEntry['bmi'].toStringAsFixed(2)}',
+                                      style: const TextStyle(
+                                          color: Colors.green,
+                                          fontWeight: FontWeight.bold),
+                                    ),
                                     subtitle: Text(
                                         'Date: ${formatter.format(bmiEntry['date'])}'),
                                   );
@@ -157,8 +161,6 @@ class HomeScreen extends ConsumerWidget {
           ),
         ),
       ),
-
-      // PUT A BOTTOM NAVIGATION BAR HERE
     );
   }
 }
